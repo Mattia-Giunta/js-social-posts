@@ -94,3 +94,89 @@ const posts = [
 
 console.log(posts)
 
+const containerPosts = document.getElementById('container')
+
+const likedPosts = [];
+
+
+// ciclo for per inserire i post nell'HTML
+for( let i = 0; i < posts.length; i++){
+
+    // testo del post
+    console.log(posts[i].content)
+    // immagine del post
+    console.log(posts[i].media)
+    // nome autore post
+    console.log(posts[i].author.name)
+    // icona profilo autore
+    console.log(posts[i].author.image)
+    // contatore dei "Mi Piace"
+    console.log(posts[i].likes)
+    // data di creazione
+    console.log(posts[i].created)
+
+
+    containerPosts.innerHTML += `
+
+        <div class="post">
+
+            <!-- post header -->
+            <div class="post__header">
+
+                <div class="post-meta">   
+
+                    <!-- icona del profilo -->
+                    <div class="post-meta__icon">
+                        <img class="profile-pic" src=${posts[i].author.image} alt="immagine profilo">                    
+                    </div>
+
+                    <!-- nome e data pubblicazione post -->
+                    <div class="post-meta__data">
+                        <div class="post-meta__author">${posts[i].author.name}</div>
+                        <div class="post-meta__time">${posts[i].created}</div>
+                    </div>    
+
+                </div>
+
+            </div>
+
+            <!-- testo del post -->
+            <div class="post__text">${posts[i].content}</div>
+
+            <!-- immagine del post -->
+            <div class="post__image">
+                <img src=${posts[i].media} alt="">
+            </div>
+
+            <!-- post footer -->
+            <div class="post__footer">
+
+                <div class="likes js-likes">
+
+                    <div class="likes__cta">
+
+                        <!-- bottone "Mi piace" -->
+                        <a id="btnLike" class="like-button js-like-button" href="#" data-postid="${posts[i].id}">
+                            <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
+                            <span class="like-button__label">Mi Piace</span>
+                        </a>
+                        
+                    </div>
+
+                    <!-- contatore dei "Mi Piace" -->
+                    <div class="likes__counter">
+                        Piace a <b id="${posts[i].id}" class="js-likes-counter">${posts[i].likes}</b> persone
+                    </div>
+
+                </div> 
+
+            </div>   
+
+        </div>
+`
+    
+
+    
+}
+
+
