@@ -99,84 +99,115 @@ const containerPosts = document.getElementById('container')
 const likedPosts = [];
 
 
-// ciclo for per inserire i post nell'HTML
-for( let i = 0; i < posts.length; i++){
-
-    // testo del post
-    console.log(posts[i].content)
-    // immagine del post
-    console.log(posts[i].media)
-    // nome autore post
-    console.log(posts[i].author.name)
-    // icona profilo autore
-    console.log(posts[i].author.image)
-    // contatore dei "Mi Piace"
-    console.log(posts[i].likes)
-    // data di creazione
-    console.log(posts[i].created)
 
 
-    containerPosts.innerHTML += `
 
-        <div class="post">
+const containerHtml = document.getElementById("container")
 
-            <!-- post header -->
-            <div class="post__header">
+// ciclo forEach per inserire i post nell'HTML
+posts.forEach((element) => {
+    
+    containerHtml.innerHTML += 
+    
+    `<div class="post">
 
-                <div class="post-meta">   
+        <div class="post__header">
 
-                    <!-- icona del profilo -->
-                    <div class="post-meta__icon">
-                        <img class="profile-pic" src=${posts[i].author.image} alt="immagine profilo">                    
-                    </div>
+            <div class="post-meta">
+            
+                <div class="post-meta__icon">
+                    <img class="profile-pic" src="${element.author.image}" alt="Phil Mangione">
+                </div>
 
-                    <!-- nome e data pubblicazione post -->
-                    <div class="post-meta__data">
-                        <div class="post-meta__author">${posts[i].author.name}</div>
-                        <div class="post-meta__time">${posts[i].created}</div>
-                    </div>    
-
+                <div class="post-meta__data">
+                    <div class="post-meta__author">${element.author.name}</div>
+                    <div class="post-meta__time">${element.created}</div>
                 </div>
 
             </div>
 
-            <!-- testo del post -->
-            <div class="post__text">${posts[i].content}</div>
+        </div>
 
-            <!-- immagine del post -->
-            <div class="post__image">
-                <img src=${posts[i].media} alt="">
+        <div class="post__text">${element.content}</div>
+
+        <div class="post__image">
+            <img src="${element.media}" alt="">
+        </div>
+
+        <div class="post__footer">
+
+            <div class="likes js-likes">
+
+                <div class="likes__cta">
+
+                    <a class="like-button  js-like-button" href="#" data-postid="${element.id}">
+                    
+                        <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
+                        <span class="like-button__label">Mi Piace</span>
+
+                    </a>
+
+                </div>
+
+                <div class="likes__counter">
+                    Piace a <b id="${element.id}" class="js-likes-counter">${element.likes}</b> persone
+                </div>
+
             </div>
 
-            <!-- post footer -->
-            <div class="post__footer">
-
-                <div class="likes js-likes">
-
-                    <div class="likes__cta">
-
-                        <!-- bottone "Mi piace" -->
-                        <a id="btnLike" class="like-button js-like-button" href="#" data-postid="${posts[i].id}">
-                            <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
-                            <span class="like-button__label">Mi Piace</span>
-                        </a>
-                        
-                    </div>
-
-                    <!-- contatore dei "Mi Piace" -->
-                    <div class="likes__counter">
-                        Piace a <b id="${posts[i].id}" class="js-likes-counter">${posts[i].likes}</b> persone
-                    </div>
-
-                </div> 
-
-            </div>   
-
         </div>
-`
-    
 
-    
-}
+    </div>`
+
+
+})
+
+
+const likeButtons = document.querySelectorAll('.js-like-button')
+console.log(likeButtons)
+
+
+// ciclo forEach per cambiare il colore al bottone e aumentare o diminuire il contatore
+likeButtons.forEach(element => {
+
+    element.addEventListener("click", function(){
+
+        event.preventDefault()
+
+        const postId = this.dataset.postid
+        console.log(postId)
+
+        const post = posts.find(post => post.id == postId)
+
+        const isLiked = !post.liked
+        post.liked = isLiked
+
+        console.log(post.liked)
+
+        const likeButtonLabel = this.querySelector('.like-button__label')
+        const likeButtonIcon = this.querySelector('.like-button__icon')
+        const likesCounter = document.getElementById(postId)
+
+
+        if (isLiked) {
+            likeButtonLabel.classList.add('like-button--liked')
+            likeButtonIcon.classList.add('like-button--liked')
+            post.likes++
+
+            likedPosts.push(postId)
+            console.log(likedPosts)
+        } else {
+            likeButtonLabel.classList.remove('like-button--liked')
+            likeButtonIcon.classList.remove('like-button--liked')
+            post.likes--
+        }
+        
+        likesCounter.textContent = post.likes
+        
+        
+    })
+
+})
+
 
 
