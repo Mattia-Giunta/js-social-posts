@@ -94,9 +94,9 @@ const posts = [
 
 console.log(posts)
 
-const containerPosts = document.getElementById('container')
+// const containerPosts = document.getElementById('container')
 
-const likedPosts = [];
+// const likedPosts = [];
 
 
 
@@ -105,33 +105,38 @@ const likedPosts = [];
 const containerHtml = document.getElementById("container")
 
 // ciclo forEach per inserire i post nell'HTML
-posts.forEach((element) => {
-    
-    containerHtml.innerHTML += 
-    
+posts.forEach((element,index) => {
+
+    // destruttura l'array di oggetti per non andare a scrivere sempre la parola element
+    const { id, content, media, author, likes, created} = element
+
+    containerHtml.innerHTML +=
+
     `<div class="post">
 
         <div class="post__header">
 
             <div class="post-meta">
-            
+
                 <div class="post-meta__icon">
-                    <img class="profile-pic" src="${element.author.image}" alt="Phil Mangione">
+                    
+                    ${author.image ? immagineProfilo(author) : immagineProfiloDefault(author)}
+                    
                 </div>
 
                 <div class="post-meta__data">
-                    <div class="post-meta__author">${element.author.name}</div>
-                    <div class="post-meta__time">${element.created}</div>
+                    <div class="post-meta__author">${author.name}</div>
+                    <div class="post-meta__time">${formattaData(created)}</div>
                 </div>
 
             </div>
 
         </div>
 
-        <div class="post__text">${element.content}</div>
+        <div class="post__text">${content}</div>
 
         <div class="post__image">
-            <img src="${element.media}" alt="">
+            <img src="${media}" alt="">
         </div>
 
         <div class="post__footer">
@@ -140,8 +145,8 @@ posts.forEach((element) => {
 
                 <div class="likes__cta">
 
-                    <a class="like-button  js-like-button" href="#" data-postid="${element.id}">
-                    
+                    <a class="like-button  js-like-button" href="#" data-postid="${id}">
+
                         <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
                         <span class="like-button__label">Mi Piace</span>
 
@@ -150,7 +155,7 @@ posts.forEach((element) => {
                 </div>
 
                 <div class="likes__counter">
-                    Piace a <b id="${element.id}" class="js-likes-counter">${element.likes}</b> persone
+                    Piace a <b id="like-counter-${id}" class="js-likes-counter">${likes}</b> persone
                 </div>
 
             </div>
@@ -163,51 +168,133 @@ posts.forEach((element) => {
 })
 
 
+
+
+
 const likeButtons = document.querySelectorAll('.js-like-button')
-console.log(likeButtons)
+const counterButtons = document.querySelectorAll('.js-likes-counter')
+
+console.log(likeButtons,counterButtons)
 
 
 // ciclo forEach per cambiare il colore al bottone e aumentare o diminuire il contatore
-likeButtons.forEach(element => {
+likeButtons.forEach((element, index) => {
 
-    element.addEventListener("click", function(){
+    element.addEventListener("click", function(e){
 
-        event.preventDefault()
+        e.preventDefault()
 
-        const postId = this.dataset.postid
-        console.log(postId)
+        element.classList.toggle('like-button--liked')
 
-        const post = posts.find(post => post.id == postId)
+        if( element.classList.contains( 'like-button--liked' ) ){
 
-        const isLiked = !post.liked
-        post.liked = isLiked
+            posts[index].likes++
 
-        console.log(post.liked)
+            counterButtons[ index ].innerHTML = posts[index].likes
 
-        const likeButtonLabel = this.querySelector('.like-button__label')
-        const likeButtonIcon = this.querySelector('.like-button__icon')
-        const likesCounter = document.getElementById(postId)
+            console.log(posts[index])
 
-
-        if (isLiked) {
-            likeButtonLabel.classList.add('like-button--liked')
-            likeButtonIcon.classList.add('like-button--liked')
-            post.likes++
-
-            likedPosts.push(postId)
-            console.log(likedPosts)
         } else {
-            likeButtonLabel.classList.remove('like-button--liked')
-            likeButtonIcon.classList.remove('like-button--liked')
-            post.likes--
+
+            posts[index].likes--
+
+            counterButtons[ index ].innerHTML = posts[index].likes
+
         }
-        
-        likesCounter.textContent = post.likes
-        
-        
+
+
+        // soluzione alternativa
+        // const postId = this.dataset.postid
+        // console.log(postId)
+
+        // const post = posts.find(post => post.id == postId)
+
+        // const isLiked = !post.liked
+        // post.liked = isLiked
+
+        // console.log(post.liked)
+
+        // const likeButtonLabel = this.querySelector('.like-button__label')
+        // const likeButtonIcon = this.querySelector('.like-button__icon')
+        // const likesCounter = document.getElementById(postId)
+
+
+        // if (isLiked) {
+        //     likeButtonLabel.classList.add('like-button--liked')
+        //     likeButtonIcon.classList.add('like-button--liked')
+        //     post.likes++
+
+        //     likedPosts.push(postId)
+        //     console.log(likedPosts)
+        // } else {
+        //     likeButtonLabel.classList.remove('like-button--liked')
+        //     likeButtonIcon.classList.remove('like-button--liked')
+        //     post.likes--
+        // }
+
+        // likesCounter.textContent = post.likes
+
+
     })
 
 })
 
 
+// Bonus per formattare la data in formato italiano
+function formattaData( created ){
 
+    // soluzione 1
+    // const dateObj = new Date(created)
+    // const day = dateObj.getDay().toString().padStart(2,'0')
+    // const month = (dateObj.getMonth() + 1 ).toString().padStart(2,'0')
+    // const year = dateObj.getFullYear()
+    // const formattedDate = `${day} / ${month} / ${year}`
+    // return formattedDate
+
+    // soluzione 2
+    // const dateObj = new Date(created)
+    // const farmattedDate = dateObj.toLocaleDateString('it-IT')
+
+
+    // soluzione 3
+    return created.split( '-' ).reverse().join( '/' )
+}
+
+
+
+// Bonus per mettere le iniziali nella immagine del profilo quando non è presente
+function immagineProfilo(author){
+
+    const { name, image} = author
+
+    return `<img class="profile-pic" src='${image}' alt='${name}'></img>`
+}
+
+function immagineProfiloDefault(author){
+
+    const { name } = author
+
+    const partiNome = name.split(' ')
+
+    console.log(partiNome)
+
+    const letters = []
+
+    partiNome.forEach ( (element,index) => {
+
+        console.log(element)
+
+        const letteraIniziale = element[0]
+        letters.push(letteraIniziale)
+    })
+
+    console.log(letters)
+
+    const iniziali = letters.join('')
+
+    return `
+        <div class="profile-pic-default">
+            <span> ${iniziali}</span>
+        </div>
+    `
+}
